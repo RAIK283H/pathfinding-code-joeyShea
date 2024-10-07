@@ -1,5 +1,8 @@
 import math
 import unittest
+import global_game_data
+import pathing
+import graph_data
 
 
 class TestPathFinding(unittest.TestCase):
@@ -23,6 +26,14 @@ class TestPathFinding(unittest.TestCase):
         self.assertNotEqual(almost_pi, pi)
         self.assertAlmostEqual(first=almost_pi, second=pi, delta=1e-1)
 
+    def test_random_algorithm(self):
+        global_game_data.current_graph_index = 0
+        global_game_data.current_player_index = 1
+        global_game_data.target_node = [1]
+        
+        path = pathing.get_random_path()
+
+        self.assertIn(global_game_data.target_node[global_game_data.current_graph_index], path)
 
 if __name__ == '__main__':
     unittest.main()
