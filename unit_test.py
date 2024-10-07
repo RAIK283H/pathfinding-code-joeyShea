@@ -35,5 +35,14 @@ class TestPathFinding(unittest.TestCase):
 
         self.assertIn(global_game_data.target_node[global_game_data.current_graph_index], path)
 
+    def test_random_algorithm_with_two(self):
+        global_game_data.current_graph_index = 1
+        global_game_data.current_player_index = 1
+        global_game_data.target_node = [1, 1]
+        
+        path = pathing.get_random_path()
+
+        self.assertIn(global_game_data.target_node[global_game_data.current_graph_index], path)
+
 if __name__ == '__main__':
     unittest.main()
