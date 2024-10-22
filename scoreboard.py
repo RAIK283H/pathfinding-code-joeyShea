@@ -24,9 +24,6 @@ class Scoreboard:
         self.distance_to_exit_label = pyglet.text.Label('Direct Distance To Exit : 0', x=0, y=0,
                                                         font_name='Arial', font_size=self.font_size, batch=batch, group=group)
         self.distance_to_exit = 0
-        self.winner_label = pyglet.text.Label('Winner: In Progress', x=0, y=50,
-                                                        font_name='Arial', font_size=self.font_size, batch=batch, group=group)
-        self.winner = 0
         for index, player in enumerate(config_data.player_data):
             player_name_label = pyglet.text.Label(str(index + 1) + " " + player[0],
                                                   x=0,
@@ -68,9 +65,7 @@ class Scoreboard:
 
     def update_elements_locations(self):
         self.distance_to_exit_label.x = config_data.window_width - self.stat_width
-        self.distance_to_exit_label.y = config_data.window_height - self.stat_height
-        self.winner_label.x = config_data.window_width - self.stat_width
-        self.winner_label.y = config_data.window_height - self.stat_height - 25
+        self.distance_to_exit_label.y = config_data.window_height - self.stat_height;
         for index, (display_element, player) in enumerate(self.player_name_display):
             display_element.x = config_data.window_width - self.stat_width
             display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 2 - self.stat_height * (index * self.number_of_stats)
@@ -98,22 +93,7 @@ class Scoreboard:
         end_y = graph_data.graph_data[global_game_data.current_graph_index][-1][0][1]
         self.distance_to_exit = math.sqrt(pow(start_x - end_x, 2) + pow(start_y - end_y, 2))
         self.distance_to_exit_label.text = 'Direct Distance To Exit : ' + "{0:.0f}".format(self.distance_to_exit)
-    
-    def update_winner(self):
-        self.winner_label.text = "Winner: "
-        for player_object in global_game_data.player_objects:
-            name = config_data.player_data[int(player_object.player_index)][0]
-            current_distance = global_game_data.player_objects[self.winner].distance_traveled
-            if (int(player_object.distance_traveled) <= current_distance) and (name != "Test"):
-                if (self.winner_label.text != "Winner: "):
-                    self.winner_label.text += ", " + name
-                else:
-                    self.winner_label.text += name
-                self.winner = player_object.player_index
-    def reset_winner(self):
-        self.winner_label.text = "Winner: In Progress"
-        self.winner = 1
-   
+
     def wrap_text(self, input):
         wrapped_text = (input[:44] + ', ...]') if len(input) > 44 else input
         return wrapped_text
@@ -141,5 +121,3 @@ class Scoreboard:
         self.update_distance_to_exit()
         self.update_distance_traveled()
         self.update_nodes_visited()
-        if (global_game_data.current_player_index == len(global_game_data.player_objects) - 1):
-            self.update_winner()

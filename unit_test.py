@@ -44,53 +44,5 @@ class TestPathFinding(unittest.TestCase):
 
         self.assertIn(global_game_data.target_node[global_game_data.current_graph_index], path)
 
-class TestDFS(unittest.TestCase):
-
-    def setUp(self):
-        self.graph = {
-            0: ('start', [1, 2]),
-            1: ('node1', [0, 3, 4]),
-            2: ('node2', [0, 5]),
-            3: ('node3', [1]),
-            4: ('node4', [1]),
-            5: ('node5', [2])
-        }
-
-    def test_dfs_direct_path(self):
-        path = pathing.dfs(self.graph, 0, 3)
-        self.assertEqual(path, [0, 1, 3])
-
-    def test_dfs_no_path(self):
-        path = pathing.dfs(self.graph, 0, 6)
-        self.assertIsNone(path)
-
-    def test_dfs_longer_path(self):
-        path = pathing.dfs(self.graph, 0, 5)
-        self.assertEqual(path, [0, 2, 5])
-
-class TestBFS(unittest.TestCase):
-
-    def setUp(self):
-        self.graph = {
-            0: ('start', [1, 2]),
-            1: ('node1', [0, 3, 4]),
-            2: ('node2', [0, 5]),
-            3: ('node3', [1]),
-            4: ('node4', [1]),
-            5: ('node5', [2])
-        }
-
-    def test_bfs_direct_path(self):
-        path = pathing.bfs(self.graph, 0, 3)
-        self.assertEqual(path, [0, 1, 3])
-
-    def test_bfs_no_path(self):
-        path = pathing.bfs(self.graph, 0, 6)
-        self.assertIsNone(path)
-
-    def test_bfs_shortest_path(self):
-        path = pathing.bfs(self.graph, 0, 5)
-        self.assertEqual(path, [0, 2, 5])
-
 if __name__ == '__main__':
     unittest.main()

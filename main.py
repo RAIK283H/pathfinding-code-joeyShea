@@ -67,7 +67,6 @@ def on_mouse_press(x, y, button, modifiers):
             new_graph_button.aabb[3]:
         new_graph_button.value = True
         change_graph()
-        scoreboard.reset_winner()
     if quit_button.aabb[0] <= x <= quit_button.aabb[2] and quit_button.aabb[1] <= y <= quit_button.aabb[3]:
         window.close()
 
