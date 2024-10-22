@@ -46,7 +46,7 @@ def get_random_path():
     return random_path
     
 def dfs(graph, start, target):
-    stack = [(start, [start])]  # Stack holds (current_node, path_to_current_node)
+    stack = [(start, [start])]
     visited = set()
     
     while stack:
@@ -57,16 +57,14 @@ def dfs(graph, start, target):
         
         visited.add(current_node)
         
-        # If we reach the target, return the path
         if current_node == target:
             return path
         
-        # Add neighbors to the stack
-        for neighbor in sorted(graph[current_node][1]):  # Assuming graph[node] -> (value, [neighbors])
+        for neighbor in sorted(graph[current_node][1]):
             if neighbor not in visited:
                 stack.append((neighbor, path + [neighbor]))
     
-    return None  # Return None if no path is found
+    return None
 
 def get_dfs_path():
     current_graph = graph_data.graph_data[global_game_data.current_graph_index]
@@ -78,7 +76,7 @@ def get_dfs_path():
     path_to_target = dfs(current_graph, start_node, target_node)
     path_from_target_to_exit = dfs(current_graph, target_node, exit_node)[1:]
     final_path = path_to_target + path_from_target_to_exit
-    # Ensure path validation and update scoreboard
+
     assert final_path[0] == start_node, "Path must start at start node"
     assert final_path[-1] == exit_node, "Path must end at exit node"
     assert target_node in final_path, "Path must reach target node"
@@ -87,27 +85,25 @@ def get_dfs_path():
     return final_path
 
 def bfs(graph, start, target):
-    queue = deque([(start, [start])])  # Queue holds (current_node, path_to_current_node)
+    queue = deque([(start, [start])])
     visited = set()
     
     while queue:
-        (current_node, path) = queue.popleft()  # Dequeue the front of the queue
+        (current_node, path) = queue.popleft()
         
         if current_node in visited:
             continue
         
         visited.add(current_node)
         
-        # If we reach the target, return the path
         if current_node == target:
             return path
         
-        # Add neighbors to the queue
-        for neighbor in sorted(graph[current_node][1]):  # Assuming graph[node] -> (value, [neighbors])
+        for neighbor in sorted(graph[current_node][1]):
             if neighbor not in visited:
                 queue.append((neighbor, path + [neighbor]))
     
-    return None  # Return None if no path is found
+    return None
 
 def get_bfs_path():
     current_graph = graph_data.graph_data[global_game_data.current_graph_index]
@@ -119,7 +115,7 @@ def get_bfs_path():
     path_to_target = bfs(current_graph, start_node, target_node)
     path_from_target_to_exit = bfs(current_graph, target_node, exit_node)[1:]
     final_path = path_to_target + path_from_target_to_exit
-    # Ensure path validation and update scoreboard
+
     assert final_path[0] == start_node, "Path must start at start node"
     assert final_path[-1] == exit_node, "Path must end at exit node"
     assert target_node in final_path, "Path must reach target node"
