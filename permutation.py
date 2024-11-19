@@ -156,8 +156,8 @@ def get_shortest(graph, cycles):
             shortest_cycle = cycle
 
     # Display the result
-    print("The shortest cycle is:", shortest_cycle)
-    print("With a total distance of:", shortest_distance)
+    #print("The shortest cycle is:", shortest_cycle)
+    #print("With a total distance of:", shortest_distance)
     return shortest_cycle
 
 
@@ -165,9 +165,9 @@ if __name__ == '__main__':
     for graph in graph_data:
         cycles = find_hamiltonian_cycles(graph)
 
-        print("Valid Hamiltonian Cycles:")
-        for i in cycles:
-            print(i)
-        if (cycles != [-1]):
-            get_shortest(graph, cycles)
-        print()
+        #print("Valid Hamiltonian Cycles:")
+        #for i in cycles:
+        #    print(i)
+        #if (cycles != [-1]):
+        #    get_shortest(graph, cycles)
+        #print()

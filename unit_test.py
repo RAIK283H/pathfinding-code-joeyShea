@@ -216,6 +216,47 @@ class TestHamiltonianCycles(unittest.TestCase):
         self.assertIsNotNone(shortest_cycle)  # Ensure a shortest cycle is found
         self.assertTrue(is_hamiltonian_cycle(shortest_cycle, graph))
 
+class TestDijkstra(unittest.TestCase):
+    def setUp(self):
+        self.graph = [
+            [(-400, -400), [1]],            # 0
+            [(-300, -300), [2, 3]],         # 1
+            [(0, 0), [1, 4]],               # 2
+            [(100, 0), [1, 4, 5]],          # 3
+            [(200, 0), [2, 3, 6]],          # 4
+            [(300, 100), [3, 6]],           # 5
+            [(400, 400), [4, 7]],           # 6
+            [(500, 500), []],               # 7
+        ]
+    
+    def test_basic_path(self):
+        result = pathing.dijkstra(self.graph, 0, 7)
+        self.assertEqual(result, [0, 1, 3, 5, 6, 7])
+
+    def test_start_equals_end(self):
+        result = pathing.dijkstra(self.graph, 0, 0)
+        self.assertEqual(result, [0])
+
+    def test_no_path(self):
+        disconnected_graph = [
+            [(-400, -400), [1]],            # 0
+            [(-300, -300), [0]],            # 1
+            [(0, 0), []],                   # 2 (disconnected)
+        ]
+        result = pathing.dijkstra(disconnected_graph, 0, 2)
+        self.assertEqual(result, [])
+
+    def test_complex_path(self):
+        result = pathing.dijkstra(self.graph, 0, 6)
+        self.assertEqual(result, [0, 1, 3, 5, 6])
+
+    def test_large_graph(self):
+        large_graph = [
+            [(i, i * 2), [i + 1]] if i < 99 else [(99, 198), []] 
+            for i in range(100)
+        ]
+        result = pathing.dijkstra(large_graph, 0, 99)
+        self.assertEqual(result, list(range(100)))
 
 if __name__ == '__main__':
     unittest.main()

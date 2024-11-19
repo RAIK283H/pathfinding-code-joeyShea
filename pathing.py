@@ -2,6 +2,8 @@ import graph_data
 import global_game_data
 from numpy import random
 from collections import deque
+import heapq
+from math import sqrt
 
 def set_current_graph_paths():
     global_game_data.graph_paths.clear()
@@ -124,6 +126,53 @@ def get_bfs_path():
     
     return final_path
 
+def dijkstra(graph, start_node, end_node):
+    # Priority queue: stores (cost, node, path)
+    pq = [(0, start_node, [start_node])]
+    visited = set()
+    
+    while pq:
+        cost, current_node, path = heapq.heappop(pq)
+        
+        if current_node in visited:
+            continue
+        visited.add(current_node)
+        
+        if current_node == end_node:
+            return path
+        
+        for neighbor in graph[current_node][1]:
+            if neighbor not in visited:
+                x1, y1 = graph[current_node][0]
+                x2, y2 = graph[neighbor][0]
+
+                distance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
+                heapq.heappush(pq, (cost + distance, neighbor, path + [neighbor]))
+    
+    return []
 
 def get_dijkstra_path():
-    return [1,2]
+    current_player_index = global_game_data.current_player_index
+    current_graph_index = global_game_data.current_graph_index
+    target_node = global_game_data.target_node
+    
+    graph = graph_data.graph_data[current_graph_index]
+    start_node = 0
+    target = target_node[current_player_index] if target_node else len(graph) - 1
+    exit_node = len(graph) - 1
+    
+    path_to_target = dijkstra(graph, start_node, target)
+    path_to_exit = dijkstra(graph, target, exit_node)
+    
+    if path_to_exit and path_to_target:
+        full_path = path_to_target[:-1] + path_to_exit
+    else:
+        full_path = path_to_target + path_to_exit
+    
+    assert full_path[0] == start_node, "Path does not begin with the start node."
+    assert full_path[len(full_path) - 1] == exit_node, "Path does not end with the exit node."
+    assert full_path[0] == start_node, "Path does not begin with the start node."
+    for i in range(len(full_path)):
+        assert (full_path[i - 1]) in graph[full_path[i]][1] or (full_path[i + 1]) in graph[full_path[i]][1], "No edge connects consecutive nodes"
+
+    return full_path
