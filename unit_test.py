@@ -3,6 +3,7 @@ import unittest
 import global_game_data
 import pathing
 import graph_data
+import f_w
 from permutation import find_hamiltonian_cycles, is_hamiltonian_cycle, calculate_distance, get_shortest, SJT
 
 class TestPathFinding(unittest.TestCase):
@@ -216,7 +217,7 @@ class TestHamiltonianCycles(unittest.TestCase):
         self.assertIsNotNone(shortest_cycle)  # Ensure a shortest cycle is found
         self.assertTrue(is_hamiltonian_cycle(shortest_cycle, graph))
 
-class TestDijkstra(unittest.TestCase):
+class TestDijkstraAndF_W(unittest.TestCase):
     def setUp(self):
         self.graph = [
             [(-400, -400), [1]],            # 0
@@ -257,6 +258,68 @@ class TestDijkstra(unittest.TestCase):
         ]
         result = pathing.dijkstra(large_graph, 0, 99)
         self.assertEqual(result, list(range(100)))
+
+class TestFloydWarshall(unittest.TestCase):
+    def setUp(self):
+        self.graph = [
+            [(0, 0), [1, 3]],
+            [(1, 1), [0, 2]],
+            [(2, 2), [1, 3]],
+            [(3, 3), [0, 2]],
+        ]
+        self.dist_matrix, self.parent_matrix, self.n =  f_w.create_adj_matrix(self.graph)
+    
+    def test_basic_path(self):
+        f_w.floyd_warshall(self.dist_matrix, self.parent_matrix, self.n)
+        path =  f_w.reconstruct_path(self.parent_matrix, 0, 2)
+        self.assertEqual(path, [0, 1, 2])  # Shortest path should be 0 -> 1 -> 2
+
+    def test_no_path(self):
+        disconnected_graph = [
+            [(0, 0), [1]],
+            [(1, 1), [0]],
+            [(2, 2), []],
+        ]
+        dist_matrix, parent_matrix, n =  f_w.create_adj_matrix(disconnected_graph)
+        f_w.floyd_warshall(dist_matrix, parent_matrix, n)
+        path =  f_w.reconstruct_path(parent_matrix, 0, 2)
+        self.assertEqual(path, [])
+
+    def test_tricky_path(self):
+        tricky_graph = [
+            [(0, 0), [1, 2]],
+            [(1000, 1000), [0, 4]],
+            [(10, 10), [0, 3]],
+            [(30, 30), [2, 4]],
+            [(50, 50), [3, 1]]
+        ]
+        dist_matrix, parent_matrix, n =  f_w.create_adj_matrix(tricky_graph)
+        f_w.floyd_warshall(dist_matrix, parent_matrix, n)
+        path =  f_w.reconstruct_path(parent_matrix, 0, 4)
+        self.assertEqual(path, [0, 2, 3, 4])
+
+    def test_negative_weight_cycle(self):
+        negative_cycle_graph = [
+            [(0, 0), [1]],
+            [(1, 1), [2]],
+            [(2, 2), [0]],
+        ]
+        dist_matrix, parent_matrix, n =  f_w.create_adj_matrix(negative_cycle_graph)
+        dist_matrix[0][1] = 1
+        dist_matrix[1][2] = -2
+        dist_matrix[2][0] = -1
+        f_w.floyd_warshall(dist_matrix, parent_matrix, n)
+        self.assertTrue(any(dist_matrix[i][i] < 0 for i in range(n)))
+
+    def test_large_graph(self):
+        large_graph = [
+            [(i, i * 2), [i + 1]] if i < 99 else [(99, 198), []] 
+            for i in range(100)
+        ]
+        dist_matrix, parent_matrix, n =  f_w.create_adj_matrix(large_graph)
+        f_w.floyd_warshall(dist_matrix, parent_matrix, n)
+        path =  f_w.reconstruct_path(parent_matrix, 0, 99)
+        self.assertEqual(path, list(range(100)))  # Path should be 0 -> 1 -> ... -> 99
 
 if __name__ == '__main__':
     unittest.main()
